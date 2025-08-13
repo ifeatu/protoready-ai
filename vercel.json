@@ -5,7 +5,6 @@
   "installCommand": "npm ci",
   "devCommand": "npm run dev",
   "regions": ["iad1"],
-  "nodejs": "20.x",
   "env": {
     "NODE_ENV": "production",
     "SKIP_ENV_VALIDATION": "1"
