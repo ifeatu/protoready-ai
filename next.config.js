@@ -128,14 +128,14 @@ const nextConfig = {
   typescript: {
     // Don't fail build on TypeScript errors in production
     // (we handle this in CI/CD pipeline)
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: process.env.NODE_ENV === 'production',
   },
   
   // ESLint configuration
   eslint: {
     // Don't fail build on ESLint errors in production
     // (we handle this in CI/CD pipeline)
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: process.env.NODE_ENV === 'production',
   },
   
   // Performance optimizations
