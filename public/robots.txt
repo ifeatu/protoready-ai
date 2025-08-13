@@ -1,0 +1,16 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /consultant/dashboard/
+Disallow: /messages/
+Disallow: /_next/
+Disallow: /static/
+
+# Host
+Host: https://protoready.ai
+
+# Sitemaps
+Sitemap: https://protoready.ai/sitemap.xml
+Sitemap: https://protoready.ai/server-sitemap.xml
