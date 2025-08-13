@@ -1,15 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { 
+import {
   ArrowLeft,
   Upload,
   CheckCircle,
@@ -19,7 +11,6 @@ import {
   Eye
 } from 'lucide-react'
 import Link from 'next/link'
-import { getAllToolPrompts, getPromptInstructions } from '@/lib/assessment/prompts'
 
 export default function AssessmentSubmitPage() {
   const [step, setStep] = useState(1)
@@ -32,42 +23,8 @@ export default function AssessmentSubmitPage() {
     reportType: 'free'
   })
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [analysisResult, setAnalysisResult] = useState<{
-    assessment: {
-      overallScore: number
-      deploymentReadiness: string
-      scalabilityIndex: number
-      maintainabilityGrade: string
-      complianceAssessment?: {
-        overallCompliance: number
-        regulatoryScores: {
-          hipaa: number
-          gdpr: number
-          ccpa: number
-          pci: number
-        }
-        violations: Array<{
-          regulation: string
-          severity: 'critical' | 'high' | 'medium' | 'low'
-          category: string
-          description: string
-          remediation: string
-        }>
-      }
-    }
-    report: {
-      summary: string
-      hasPdf: boolean
-    }
-  } | null>(null)
+  const [analysisResult, setAnalysisResult] = useState<any | null>(null)
   const [error, setError] = useState('')
-
-  const toolPrompts = getAllToolPrompts()
-
-  const handleToolSelect = (toolType: string) => {
-    setSelectedTool(toolType)
-    setStep(2)
-  }
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -114,49 +71,23 @@ export default function AssessmentSubmitPage() {
     return 'text-red-600'
   }
 
-  const getReadinessColor = (readiness: string) => {
-    switch (readiness) {
-      case 'ready': return 'text-green-600'
-      case 'needs-work': return 'text-yellow-600'
-      case 'not-ready': return 'text-red-600'
-      default: return 'text-gray-600'
-    }
-  }
-
-  const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600'
-    if (score >= 70) return 'text-yellow-600'
-    if (score >= 50) return 'text-orange-600'
-    return 'text-red-600'
-  }
-
-  const getSeverityColor = (severity: 'critical' | 'high' | 'medium' | 'low') => {
-    switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200'
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200'
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/assessment">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Link>
-            </Button>
+            <Link href="/assessment" className="inline-flex items-center px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Link>
             <h1 className="text-2xl font-bold text-gray-900">Assessment Wizard</h1>
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Step {step} of 4</span>
-            <Progress value={(step / 4) * 100} className="w-24" />
+            <div className="w-24 bg-gray-200 rounded-full h-2">
+              <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${(step / 4) * 100}%` }}></div>
+            </div>
           </div>
         </div>
       </header>
@@ -166,398 +97,231 @@ export default function AssessmentSubmitPage() {
           
           {/* Step 1: Tool Selection */}
           {step === 1 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Select Your Development Tool</CardTitle>
-                <CardDescription>
-                  Choose the tool you used to build your application
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {toolPrompts.map((tool) => (
-                    <Card 
-                      key={tool.toolType}
-                      className="cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => handleToolSelect(tool.toolType)}
-                    >
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-lg">{tool.name}</CardTitle>
-                          <Badge variant="secondary">
-                            {tool.toolType === 'lovable' ? 'Popular' : 
-                             tool.toolType === 'github' ? 'Advanced' : 'Supported'}
-                          </Badge>
-                        </div>
-                        <CardDescription>{tool.description}</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <h2 className="text-xl font-semibold mb-2">Select Your Development Tool</h2>
+              <p className="text-gray-600 mb-6">Choose the tool you used to build your application</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {['Lovable', 'Replit', 'Bolt/Claude', 'GitHub Repository'].map((tool) => (
+                  <div
+                    key={tool}
+                    className="border rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => {
+                      setSelectedTool(tool.toLowerCase())
+                      setStep(2)
+                    }}
+                  >
+                    <h3 className="font-semibold">{tool}</h3>
+                    <p className="text-sm text-gray-600">Click to select this tool</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Step 2: Instructions */}
           {step === 2 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Analysis Instructions</CardTitle>
-                <CardDescription>
-                  Follow these instructions to generate the required analysis data
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="prose max-w-none">
-                  <div 
-                    className="bg-gray-50 p-4 rounded-lg text-sm font-mono whitespace-pre-wrap"
-                    dangerouslySetInnerHTML={{ 
-                      __html: getPromptInstructions(selectedTool)
-                        .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-800 text-white p-3 rounded mt-2 mb-2 overflow-x-auto"><code>$1</code></pre>')
-                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                        .replace(/\n/g, '<br>')
-                    }}
-                  />
-                </div>
-                <div className="flex gap-4 mt-6">
-                  <Button onClick={() => setStep(3)}>
-                    I&apos;ve Generated the Output
-                  </Button>
-                  <Button variant="outline" onClick={() => setStep(1)}>
-                    Choose Different Tool
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <h2 className="text-xl font-semibold mb-2">Analysis Instructions</h2>
+              <p className="text-gray-600 mb-6">Follow these instructions to generate the required analysis data</p>
+              <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                <p className="text-sm font-mono">
+                  Please follow the specific instructions for {selectedTool} to generate your project analysis output.
+                </p>
+              </div>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setStep(3)}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                >
+                  I've Generated the Output
+                </button>
+                <button 
+                  onClick={() => setStep(1)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Choose Different Tool
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Step 3: Form */}
           {step === 3 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Project Information</CardTitle>
-                <CardDescription>
-                  Provide details about your project and paste the analysis output
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleFormSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="projectName">Project Name</Label>
-                      <Input
-                        id="projectName"
-                        value={formData.projectName}
-                        onChange={(e) => setFormData({...formData, projectName: e.target.value})}
-                        placeholder="My Awesome App"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="projectType">Project Type</Label>
-                      <Select 
-                        value={formData.projectType} 
-                        onValueChange={(value) => setFormData({...formData, projectType: value})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select project type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="web-app">Web Application</SelectItem>
-                          <SelectItem value="mobile-app">Mobile Application</SelectItem>
-                          <SelectItem value="api">API/Backend Service</SelectItem>
-                          <SelectItem value="desktop">Desktop Application</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <h2 className="text-xl font-semibold mb-2">Project Information</h2>
+              <p className="text-gray-600 mb-6">Provide details about your project and paste the analysis output</p>
+              <form onSubmit={handleFormSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="projectDescription">Project Description (Optional)</Label>
-                    <Textarea
-                      id="projectDescription"
-                      value={formData.projectDescription}
-                      onChange={(e) => setFormData({...formData, projectDescription: e.target.value})}
-                      placeholder="Brief description of what your application does..."
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="codeOutput">Analysis Output *</Label>
-                    <Textarea
-                      id="codeOutput"
-                      value={formData.codeOutput}
-                      onChange={(e) => setFormData({...formData, codeOutput: e.target.value})}
-                      placeholder="Paste the complete output from the analysis commands here..."
-                      rows={10}
-                      className="font-mono text-sm"
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                    <input
+                      type="text"
+                      value={formData.projectName}
+                      onChange={(e) => setFormData({...formData, projectName: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="My Awesome App"
                       required
                     />
-                    <p className="text-sm text-gray-600 mt-1">
-                      Paste the complete output from the commands provided in the previous step
-                    </p>
                   </div>
-
                   <div>
-                    <Label htmlFor="reportType">Report Type</Label>
-                    <Select 
-                      value={formData.reportType} 
-                      onValueChange={(value) => setFormData({...formData, reportType: value})}
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Project Type</label>
+                    <select 
+                      value={formData.projectType} 
+                      onChange={(e) => setFormData({...formData, projectType: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      required
                     >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="free">Free Assessment</SelectItem>
-                        <SelectItem value="basic">Basic Report ($29)</SelectItem>
-                        <SelectItem value="professional">Professional Report ($99)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      <option value="">Select project type</option>
+                      <option value="web-app">Web Application</option>
+                      <option value="mobile-app">Mobile Application</option>
+                      <option value="api">API/Backend Service</option>
+                      <option value="desktop">Desktop Application</option>
+                      <option value="other">Other</option>
+                    </select>
                   </div>
+                </div>
 
-                  {error && (
-                    <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                      <AlertCircle className="h-4 w-4" />
-                      <span>{error}</span>
-                    </div>
-                  )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Project Description (Optional)</label>
+                  <textarea
+                    value={formData.projectDescription}
+                    onChange={(e) => setFormData({...formData, projectDescription: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Brief description of what your application does..."
+                    rows={3}
+                  />
+                </div>
 
-                  <div className="flex gap-4">
-                    <Button type="submit" disabled={isAnalyzing}>
-                      {isAnalyzing ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Analyzing...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="h-4 w-4 mr-2" />
-                          Start Analysis
-                        </>
-                      )}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setStep(2)}>
-                      Back to Instructions
-                    </Button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Analysis Output *</label>
+                  <textarea
+                    value={formData.codeOutput}
+                    onChange={(e) => setFormData({...formData, codeOutput: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm"
+                    placeholder="Paste the complete output from the analysis commands here..."
+                    rows={10}
+                    required
+                  />
+                  <p className="text-sm text-gray-600 mt-1">
+                    Paste the complete output from the commands provided in the previous step
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Report Type</label>
+                  <select 
+                    value={formData.reportType} 
+                    onChange={(e) => setFormData({...formData, reportType: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="free">Free Assessment</option>
+                    <option value="basic">Basic Report ($29)</option>
+                    <option value="professional">Professional Report ($99)</option>
+                  </select>
+                </div>
+
+                {error && (
+                  <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                    <AlertCircle className="h-4 w-4" />
+                    <span>{error}</span>
                   </div>
-                </form>
-              </CardContent>
-            </Card>
+                )}
+
+                <div className="flex gap-4">
+                  <button 
+                    type="submit" 
+                    disabled={isAnalyzing}
+                    className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Start Analysis
+                      </>
+                    )}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setStep(2)}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  >
+                    Back to Instructions
+                  </button>
+                </div>
+              </form>
+            </div>
           )}
 
           {/* Step 4: Results */}
           {step === 4 && analysisResult && (
             <div className="space-y-6">
-              {/* Results Summary */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                    Analysis Complete
-                  </CardTitle>
-                  <CardDescription>
-                    Your production readiness assessment is ready
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center">
-                      <div className={`text-3xl font-bold ${getScoreColor(analysisResult.assessment.overallScore)}`}>
-                        {analysisResult.assessment.overallScore}
-                      </div>
-                      <div className="text-sm text-gray-600">Overall Score</div>
+              <div className="bg-white rounded-xl shadow-sm border p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                  <h2 className="text-xl font-semibold">Analysis Complete</h2>
+                </div>
+                <p className="text-gray-600 mb-6">Your production readiness assessment is ready</p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="text-center">
+                    <div className={`text-3xl font-bold ${getScoreColor(analysisResult.assessment?.overallScore || 0)}`}>
+                      {analysisResult.assessment?.overallScore || 'N/A'}
                     </div>
-                    <div className="text-center">
-                      <div className={`text-lg font-semibold ${getReadinessColor(analysisResult.assessment.deploymentReadiness)}`}>
-                        {analysisResult.assessment.deploymentReadiness.toUpperCase()}
-                      </div>
-                      <div className="text-sm text-gray-600">Deployment Status</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {analysisResult.assessment.scalabilityIndex}/5
-                      </div>
-                      <div className="text-sm text-gray-600">Scalability</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {analysisResult.assessment.maintainabilityGrade}
-                      </div>
-                      <div className="text-sm text-gray-600">Maintainability</div>
-                    </div>
+                    <div className="text-sm text-gray-600">Overall Score</div>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Regulatory Compliance Section */}
-              {analysisResult.assessment.complianceAssessment && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      🛡️ Regulatory Compliance Assessment
-                    </CardTitle>
-                    <CardDescription>
-                      HIPAA, GDPR, CCPA, and PCI compliance analysis
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      {/* Overall Compliance Score */}
-                      <div className="text-center">
-                        <div className={`text-4xl font-bold ${getComplianceColor(analysisResult.assessment.complianceAssessment.overallCompliance)}`}>
-                          {analysisResult.assessment.complianceAssessment.overallCompliance}%
-                        </div>
-                        <div className="text-sm text-gray-600">Overall Compliance Score</div>
-                      </div>
-
-                      {/* Regulatory Scores */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className={`text-xl font-semibold ${getComplianceColor(analysisResult.assessment.complianceAssessment.regulatoryScores.hipaa)}`}>
-                            {analysisResult.assessment.complianceAssessment.regulatoryScores.hipaa}%
-                          </div>
-                          <div className="text-sm text-gray-600 font-medium">HIPAA</div>
-                          <div className="text-xs text-gray-500">Health Data</div>
-                        </div>
-                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className={`text-xl font-semibold ${getComplianceColor(analysisResult.assessment.complianceAssessment.regulatoryScores.gdpr)}`}>
-                            {analysisResult.assessment.complianceAssessment.regulatoryScores.gdpr}%
-                          </div>
-                          <div className="text-sm text-gray-600 font-medium">GDPR</div>
-                          <div className="text-xs text-gray-500">EU Privacy</div>
-                        </div>
-                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className={`text-xl font-semibold ${getComplianceColor(analysisResult.assessment.complianceAssessment.regulatoryScores.ccpa)}`}>
-                            {analysisResult.assessment.complianceAssessment.regulatoryScores.ccpa}%
-                          </div>
-                          <div className="text-sm text-gray-600 font-medium">CCPA</div>
-                          <div className="text-xs text-gray-500">California Privacy</div>
-                        </div>
-                        <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className={`text-xl font-semibold ${getComplianceColor(analysisResult.assessment.complianceAssessment.regulatoryScores.pci)}`}>
-                            {analysisResult.assessment.complianceAssessment.regulatoryScores.pci}%
-                          </div>
-                          <div className="text-sm text-gray-600 font-medium">PCI DSS</div>
-                          <div className="text-xs text-gray-500">Payment Security</div>
-                        </div>
-                      </div>
-
-                      {/* Compliance Violations */}
-                      {analysisResult.assessment.complianceAssessment.violations.length > 0 && (
-                        <div>
-                          <h4 className="font-semibold mb-3 text-gray-800">Compliance Issues Found</h4>
-                          <div className="space-y-3 max-h-60 overflow-y-auto">
-                            {analysisResult.assessment.complianceAssessment.violations.slice(0, 5).map((violation, index) => (
-                              <div key={index} className="p-3 border rounded-lg bg-white">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <Badge className={getSeverityColor(violation.severity)}>
-                                        {violation.severity.toUpperCase()}
-                                      </Badge>
-                                      <span className="text-sm font-medium text-blue-600">
-                                        {violation.regulation}
-                                      </span>
-                                      <span className="text-xs text-gray-500">
-                                        {violation.category}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm text-gray-700 mb-2">
-                                      {violation.description}
-                                    </p>
-                                    <p className="text-xs text-gray-600 bg-blue-50 p-2 rounded">
-                                      <strong>Remediation:</strong> {violation.remediation}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                            {analysisResult.assessment.complianceAssessment.violations.length > 5 && (
-                              <div className="text-center text-sm text-gray-600 p-2">
-                                +{analysisResult.assessment.complianceAssessment.violations.length - 5} more issues in detailed report
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-blue-600">
+                      {analysisResult.assessment?.deploymentReadiness || 'Unknown'}
                     </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Report Actions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Your Report</CardTitle>
-                  <CardDescription>
-                    Access your detailed production readiness assessment
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4">
-                    <Button className="flex items-center gap-2" onClick={() => window.open('/protoready-sample.pdf', '_blank')}>
-                      <Eye className="h-4 w-4" />
-                      View Report
-                    </Button>
-                    {analysisResult.report.hasPdf && (
-                      <Button variant="outline" className="flex items-center gap-2" onClick={() => {
-                        const link = document.createElement('a')
-                        link.href = '/protoready-sample.pdf'
-                        link.download = 'protoready-assessment-report.pdf'
-                        link.click()
-                      }}>
-                        <Download className="h-4 w-4" />
-                        Download PDF
-                      </Button>
-                    )}
-                    <Button variant="outline" asChild>
-                      <Link href="/marketplace">
-                        Find Consultant
-                      </Link>
-                    </Button>
+                    <div className="text-sm text-gray-600">Deployment Status</div>
                   </div>
-                  
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-semibold mb-2">Quick Summary:</h4>
-                    <p className="text-sm text-gray-700 whitespace-pre-line">
-                      {analysisResult.report.summary}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Next Steps */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Next Steps</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {analysisResult.assessment.deploymentReadiness === 'ready' ? (
-                      <div className="flex items-center gap-2 text-green-600">
-                        <CheckCircle className="h-4 w-4" />
-                        <span>Your app is ready for production deployment!</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-yellow-600">
-                        <AlertCircle className="h-4 w-4" />
-                        <span>Address the identified issues before deploying to production</span>
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-4 mt-4">
-                      <Button asChild>
-                        <Link href="/assessment">New Assessment</Link>
-                      </Button>
-                      <Button variant="outline" asChild>
-                        <Link href="/dashboard">View Dashboard</Link>
-                      </Button>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {analysisResult.assessment?.scalabilityIndex || 'N/A'}/5
                     </div>
+                    <div className="text-sm text-gray-600">Scalability</div>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {analysisResult.assessment?.maintainabilityGrade || 'N/A'}
+                    </div>
+                    <div className="text-sm text-gray-600">Maintainability</div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => window.open('/protoready-sample.pdf', '_blank')}
+                    className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Report
+                  </button>
+                  <button 
+                    onClick={() => {
+                      const link = document.createElement('a')
+                      link.href = '/protoready-sample.pdf'
+                      link.download = 'protoready-assessment-report.pdf'
+                      link.click()
+                    }}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </button>
+                  <Link 
+                    href="/marketplace"
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  >
+                    Find Consultant
+                  </Link>
+                </div>
+              </div>
             </div>
           )}
         </div>
