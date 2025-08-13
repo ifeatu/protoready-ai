@@ -8,6 +8,7 @@ import {
   Star,
   Clock
 } from 'lucide-react'
+import { AuthButton } from '@/components/auth-button'
 
 export default function HomePage() {
   return (
@@ -29,9 +30,7 @@ export default function HomePage() {
             <Link href="/pricing" className="text-gray-600 hover:text-gray-900">
               Pricing
             </Link>
-            <Link href="/auth" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-              Get Started
-            </Link>
+            <AuthButton />
           </div>
         </nav>
       </header>
