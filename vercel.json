@@ -77,8 +77,8 @@
       "permanent": true
     },
     {
-      "source": "https://www.protoready.ai/(.*)",
-      "destination": "https://protoready.ai/$1",
+      "source": "/www/(.*)",
+      "destination": "/$1", 
       "permanent": true
     }
   ],
