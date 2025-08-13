@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build", 
   "outputDirectory": ".next",
   "installCommand": "npm ci",
   "devCommand": "npm run dev",
@@ -74,6 +74,11 @@
     {
       "source": "/home",
       "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "https://www.protoready.ai/(.*)",
+      "destination": "https://protoready.ai/$1",
       "permanent": true
     }
   ],
