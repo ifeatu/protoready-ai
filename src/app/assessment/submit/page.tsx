@@ -123,11 +123,41 @@ export default function AssessmentSubmitPage() {
             <div className="bg-white rounded-xl shadow-sm border p-6">
               <h2 className="text-xl font-semibold mb-2">Analysis Instructions</h2>
               <p className="text-gray-600 mb-6">Follow these instructions to generate the required analysis data</p>
-              <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                <p className="text-sm font-mono">
-                  Please follow the specific instructions for {selectedTool} to generate your project analysis output.
-                </p>
-              </div>
+              
+              {selectedTool === 'lovable' && (
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                  <p className="text-sm font-medium mb-3">Run this command in your project directory:</p>
+                  <div className="bg-black p-3 rounded text-green-400 font-mono text-sm overflow-x-auto">
+                    <pre>{`echo "=== PROTOREADY ANALYSIS START ===" && \\
+echo "=== PROJECT STRUCTURE ===" && \\
+find . -type f \\( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" \\) | head -30 && \\
+echo "=== PACKAGE DEPENDENCIES ===" && \\
+cat package.json | grep -A 50 '"dependencies"' && \\
+echo "=== BUILD CONFIGURATION ===" && \\
+ls -la | grep -E "(webpack|vite|next|build)" && \\
+echo "=== SECURITY SCAN ===" && \\
+grep -r "API_KEY\\|SECRET\\|PASSWORD\\|console\\.log" . --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" | head -10 && \\
+echo "=== DATABASE USAGE ===" && \\
+grep -r "mongodb\\|postgresql\\|mysql\\|firebase\\|supabase" . --include="*.js" --include="*.ts" | head -5 && \\
+echo "=== STATE MANAGEMENT ===" && \\
+grep -r "useState\\|useEffect\\|redux\\|zustand\\|context" . --include="*.js" --include="*.ts" | wc -l && \\
+echo "=== ERROR HANDLING ===" && \\
+grep -r "try\\|catch\\|throw\\|Error" . --include="*.js" --include="*.ts" | wc -l && \\
+echo "=== PERFORMANCE PATTERNS ===" && \\
+grep -r "useMemo\\|useCallback\\|React\\.memo\\|lazy" . --include="*.js" --include="*.ts" | wc -l && \\
+echo "=== PROTOREADY ANALYSIS END ==="`}</pre>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-3">Copy the entire output and paste it in the next step.</p>
+                </div>
+              )}
+              
+              {selectedTool !== 'lovable' && (
+                <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                  <p className="text-sm font-mono">
+                    Please follow the specific instructions for {selectedTool} to generate your project analysis output.
+                  </p>
+                </div>
+              )}
               <div className="flex gap-4">
                 <button 
                   onClick={() => setStep(3)}
