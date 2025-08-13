@@ -1,10 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
+// Removed UI component dependencies
 import { 
   Plus,
   FileText,
@@ -145,12 +142,10 @@ export default function DashboardPage() {
             <span className="text-2xl font-bold text-gray-900">ProtoReady.ai</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Button asChild>
-              <Link href="/assessment">
-                <Plus className="h-4 w-4 mr-2" />
-                New Assessment
-              </Link>
-            </Button>
+            <Link href="/assessment" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+              <Plus className="h-4 w-4 mr-2" />
+              New Assessment
+            </Link>
           </div>
         </div>
       </header>
@@ -165,87 +160,75 @@ export default function DashboardPage() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <FileText className="h-8 w-8 text-blue-600" />
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Assessments</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats.totalAssessments}</p>
-                  </div>
+            <div className="bg-white rounded-xl border shadow-sm p-6">
+              <div className="flex items-center">
+                <FileText className="h-8 w-8 text-blue-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Total Assessments</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.totalAssessments}</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <TrendingUp className="h-8 w-8 text-green-600" />
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Average Score</p>
-                    <p className={`text-2xl font-bold ${getScoreColor(stats.averageScore)}`}>
-                      {stats.averageScore}
-                    </p>
-                  </div>
+            <div className="bg-white rounded-xl border shadow-sm p-6">
+              <div className="flex items-center">
+                <TrendingUp className="h-8 w-8 text-green-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Average Score</p>
+                  <p className={`text-2xl font-bold ${getScoreColor(stats.averageScore)}`}>
+                    {stats.averageScore}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Production Ready</p>
-                    <p className="text-2xl font-bold text-green-600">{stats.readyForProduction}</p>
-                  </div>
+            <div className="bg-white rounded-xl border shadow-sm p-6">
+              <div className="flex items-center">
+                <CheckCircle2 className="h-8 w-8 text-green-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Production Ready</p>
+                  <p className="text-2xl font-bold text-green-600">{stats.readyForProduction}</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center">
-                  <AlertTriangle className="h-8 w-8 text-red-600" />
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Critical Issues</p>
-                    <p className="text-2xl font-bold text-red-600">{stats.criticalIssues}</p>
-                  </div>
+            <div className="bg-white rounded-xl border shadow-sm p-6">
+              <div className="flex items-center">
+                <AlertTriangle className="h-8 w-8 text-red-600" />
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Critical Issues</p>
+                  <p className="text-2xl font-bold text-red-600">{stats.criticalIssues}</p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Recent Assessments */}
-          <Card>
-            <CardHeader>
+          <div className="bg-white rounded-xl border shadow-sm">
+            <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Recent Assessments</CardTitle>
-                  <CardDescription>
+                  <h3 className="font-semibold leading-none mb-1.5">Recent Assessments</h3>
+                  <p className="text-gray-500 text-sm">
                     Your latest production readiness assessments
-                  </CardDescription>
+                  </p>
                 </div>
-                <Button variant="outline" asChild>
-                  <Link href="/assessment">
-                    <Plus className="h-4 w-4 mr-2" />
-                    New Assessment
-                  </Link>
-                </Button>
+                <Link href="/assessment" className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Assessment
+                </Link>
               </div>
-            </CardHeader>
-            <CardContent>
+            </div>
+            <div className="px-6 pb-6">
               {reports.length === 0 ? (
                 <div className="text-center py-12">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No assessments yet</h3>
                   <p className="text-gray-600 mb-4">Get started by running your first assessment</p>
-                  <Button asChild>
-                    <Link href="/assessment">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Start Assessment
-                    </Link>
-                  </Button>
+                  <Link href="/assessment" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Start Assessment
+                  </Link>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -257,15 +240,12 @@ export default function DashboardPage() {
                             <div>
                               <h3 className="font-semibold text-gray-900">{report.project_name}</h3>
                               <div className="flex items-center space-x-2 mt-1">
-                                <Badge variant="outline" className="text-xs">
+                                <span className="text-xs px-2 py-1 border border-gray-200 rounded text-gray-600 bg-white">
                                   {report.tool_type}
-                                </Badge>
-                                <Badge 
-                                  variant={report.report_type === 'professional' ? 'default' : 'secondary'}
-                                  className="text-xs"
-                                >
+                                </span>
+                                <span className={`text-xs px-2 py-1 rounded ${report.report_type === 'professional' ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800'}`}>
                                   {report.report_type}
-                                </Badge>
+                                </span>
                                 <span className="text-xs text-gray-500 flex items-center">
                                   <Calendar className="h-3 w-3 mr-1" />
                                   {formatDate(report.created_at)}
@@ -293,14 +273,14 @@ export default function DashboardPage() {
                           </div>
                           
                           <div className="flex items-center space-x-2">
-                            <Button size="sm" variant="outline">
+                            <button className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                               <Eye className="h-4 w-4 mr-1" />
                               View
-                            </Button>
-                            <Button size="sm" variant="outline">
+                            </button>
+                            <button className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                               <Download className="h-4 w-4 mr-1" />
                               Export
-                            </Button>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -312,12 +292,10 @@ export default function DashboardPage() {
                               <AlertTriangle className="h-4 w-4 text-yellow-600" />
                               <span className="text-sm text-gray-600">Improvements recommended</span>
                             </div>
-                            <Button size="sm" variant="ghost" asChild>
-                              <Link href="/marketplace">
-                                <Users className="h-4 w-4 mr-1" />
-                                Find Consultant
-                              </Link>
-                            </Button>
+                            <Link href="/marketplace" className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 rounded transition-colors">
+                              <Users className="h-4 w-4 mr-1" />
+                              Find Consultant
+                            </Link>
                           </div>
                         </div>
                       )}
@@ -325,49 +303,49 @@ export default function DashboardPage() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
+            <div className="bg-white rounded-xl border shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="p-6 text-center">
                 <Shield className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Security Assessment</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Run a comprehensive security analysis of your application
                 </p>
-                <Button className="w-full" asChild>
-                  <Link href="/assessment">Start Security Scan</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Link href="/assessment" className="inline-flex items-center justify-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                  Start Security Scan
+                </Link>
+              </div>
+            </div>
 
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
+            <div className="bg-white rounded-xl border shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="p-6 text-center">
                 <Zap className="h-12 w-12 text-yellow-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Performance Review</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Identify bottlenecks and optimization opportunities
                 </p>
-                <Button className="w-full" variant="outline" asChild>
-                  <Link href="/assessment">Analyze Performance</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Link href="/assessment" className="inline-flex items-center justify-center w-full px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                  Analyze Performance
+                </Link>
+              </div>
+            </div>
 
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6 text-center">
+            <div className="bg-white rounded-xl border shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="p-6 text-center">
                 <Users className="h-12 w-12 text-green-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Expert Consultants</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   Connect with vetted developers for implementation support
                 </p>
-                <Button className="w-full" variant="outline" asChild>
-                  <Link href="/marketplace">Browse Consultants</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Link href="/marketplace" className="inline-flex items-center justify-center w-full px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                  Browse Consultants
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </main>

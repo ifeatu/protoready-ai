@@ -1,7 +1,4 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { 
   CheckCircle, 
   Shield, 
@@ -32,9 +29,9 @@ export default function HomePage() {
             <Link href="/pricing" className="text-gray-600 hover:text-gray-900">
               Pricing
             </Link>
-            <Button asChild>
-              <Link href="/auth">Get Started</Link>
-            </Button>
+            <Link href="/auth" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+              Get Started
+            </Link>
           </div>
         </nav>
       </header>
@@ -42,9 +39,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="text-center max-w-4xl mx-auto">
-          <Badge className="mb-4" variant="secondary">
+          <div className="inline-block mb-4 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
             Bridge the Gap: Prototype → Production
-          </Badge>
+          </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
             Turn Your <span className="text-indigo-600">AI-Built Apps</span> 
             <br />
@@ -55,14 +52,12 @@ export default function HomePage() {
             Connect with expert developers to bridge the final gap to production.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild>
-              <Link href="/assessment">
-                Start Free Assessment <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/marketplace">Browse Consultants</Link>
-            </Button>
+            <Link href="/assessment" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+              Start Free Assessment <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+            <Link href="/marketplace" className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              Browse Consultants
+            </Link>
           </div>
         </div>
       </section>
@@ -70,33 +65,27 @@ export default function HomePage() {
       {/* Stats Section */}
       <section className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-center mb-2">
-                <Clock className="h-6 w-6 text-indigo-600 mr-2" />
-                <span className="text-2xl font-bold">2 mins</span>
-              </div>
-              <p className="text-gray-600">Average assessment time</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-center mb-2">
-                <Star className="h-6 w-6 text-indigo-600 mr-2" />
-                <span className="text-2xl font-bold">87%</span>
-              </div>
-              <p className="text-gray-600">Average readiness improvement</p>
-            </CardContent>
-          </Card>
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-center mb-2">
-                <Users className="h-6 w-6 text-indigo-600 mr-2" />
-                <span className="text-2xl font-bold">50+</span>
-              </div>
-              <p className="text-gray-600">Expert consultants available</p>
-            </CardContent>
-          </Card>
+          <div className="bg-white text-center rounded-xl border shadow-sm p-6">
+            <div className="flex items-center justify-center mb-2">
+              <Clock className="h-6 w-6 text-indigo-600 mr-2" />
+              <span className="text-2xl font-bold">2 mins</span>
+            </div>
+            <p className="text-gray-600">Average assessment time</p>
+          </div>
+          <div className="bg-white text-center rounded-xl border shadow-sm p-6">
+            <div className="flex items-center justify-center mb-2">
+              <Star className="h-6 w-6 text-indigo-600 mr-2" />
+              <span className="text-2xl font-bold">87%</span>
+            </div>
+            <p className="text-gray-600">Average readiness improvement</p>
+          </div>
+          <div className="bg-white text-center rounded-xl border shadow-sm p-6">
+            <div className="flex items-center justify-center mb-2">
+              <Users className="h-6 w-6 text-indigo-600 mr-2" />
+              <span className="text-2xl font-bold">50+</span>
+            </div>
+            <p className="text-gray-600">Expert consultants available</p>
+          </div>
         </div>
       </section>
 
@@ -112,15 +101,13 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <Card>
-            <CardHeader>
+          <div className="bg-white rounded-xl border shadow-sm">
+            <div className="p-6">
               <Shield className="h-8 w-8 text-indigo-600 mb-2" />
-              <CardTitle>Security Assessment</CardTitle>
-              <CardDescription>
+              <h3 className="font-semibold leading-none mb-1.5">Security Assessment</h3>
+              <p className="text-gray-500 text-sm mb-4">
                 Comprehensive security analysis including vulnerability scanning and compliance checks.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
@@ -135,18 +122,16 @@ export default function HomePage() {
                   <span className="text-sm">SOC 2 readiness</span>
                 </li>
               </ul>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
+          <div className="bg-white rounded-xl border shadow-sm">
+            <div className="p-6">
               <Zap className="h-8 w-8 text-indigo-600 mb-2" />
-              <CardTitle>Performance Analysis</CardTitle>
-              <CardDescription>
+              <h3 className="font-semibold leading-none mb-1.5">Performance Analysis</h3>
+              <p className="text-gray-500 text-sm mb-4">
                 Identify bottlenecks and optimization opportunities for scale.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
@@ -161,18 +146,16 @@ export default function HomePage() {
                   <span className="text-sm">Caching strategies</span>
                 </li>
               </ul>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
+          <div className="bg-white rounded-xl border shadow-sm">
+            <div className="p-6">
               <Users className="h-8 w-8 text-indigo-600 mb-2" />
-              <CardTitle>Expert Consultants</CardTitle>
-              <CardDescription>
+              <h3 className="font-semibold leading-none mb-1.5">Expert Consultants</h3>
+              <p className="text-gray-500 text-sm mb-4">
                 Connect with vetted developers specialized in production deployment.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
@@ -187,8 +170,8 @@ export default function HomePage() {
                   <span className="text-sm">Proven track record</span>
                 </li>
               </ul>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -204,68 +187,62 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Free</CardTitle>
-              <CardDescription>
+          <div className="bg-white rounded-xl border shadow-sm">
+            <div className="p-6">
+              <h3 className="font-semibold leading-none mb-1.5">Free</h3>
+              <div className="text-gray-500 text-sm mb-4">
                 <span className="text-3xl font-bold">$0</span>
                 <span className="text-gray-600">/month</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </div>
               <ul className="space-y-3">
                 <li>• Basic readiness score</li>
                 <li>• 3 assessments per month</li>
                 <li>• High-level recommendations</li>
               </ul>
-              <Button className="w-full mt-6" variant="outline" asChild>
-                <Link href="/assessment">Start Free</Link>
-              </Button>
-            </CardContent>
-          </Card>
+              <Link href="/assessment" className="inline-flex items-center justify-center w-full mt-6 px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                Start Free
+              </Link>
+            </div>
+          </div>
 
-          <Card className="border-indigo-200 border-2">
-            <CardHeader>
-              <Badge className="w-fit mb-2">Most Popular</Badge>
-              <CardTitle>Basic</CardTitle>
-              <CardDescription>
+          <div className="bg-white rounded-xl border-indigo-200 border-2 shadow-sm">
+            <div className="p-6">
+              <div className="inline-block w-fit mb-2 bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">Most Popular</div>
+              <h3 className="font-semibold leading-none mb-1.5">Basic</h3>
+              <div className="text-gray-500 text-sm mb-4">
                 <span className="text-3xl font-bold">$29</span>
                 <span className="text-gray-600">/month</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </div>
               <ul className="space-y-3">
                 <li>• Detailed technical reports</li>
                 <li>• Unlimited assessments</li>
                 <li>• Remediation roadmaps</li>
                 <li>• Priority support</li>
               </ul>
-              <Button className="w-full mt-6" asChild>
-                <Link href="/auth">Get Started</Link>
-              </Button>
-            </CardContent>
-          </Card>
+              <Link href="/auth" className="inline-flex items-center justify-center w-full mt-6 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                Get Started
+              </Link>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Professional</CardTitle>
-              <CardDescription>
+          <div className="bg-white rounded-xl border shadow-sm">
+            <div className="p-6">
+              <h3 className="font-semibold leading-none mb-1.5">Professional</h3>
+              <div className="text-gray-500 text-sm mb-4">
                 <span className="text-3xl font-bold">$99</span>
                 <span className="text-gray-600">/month</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </div>
               <ul className="space-y-3">
                 <li>• Enterprise compliance analysis</li>
                 <li>• Consultant matching</li>
                 <li>• Implementation guidance</li>
                 <li>• SOC 2/ISO 27001 prep</li>
               </ul>
-              <Button className="w-full mt-6" variant="outline" asChild>
-                <Link href="/auth">Contact Sales</Link>
-              </Button>
-            </CardContent>
-          </Card>
+              <Link href="/auth" className="inline-flex items-center justify-center w-full mt-6 px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                Contact Sales
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -278,11 +255,9 @@ export default function HomePage() {
           <p className="text-lg text-gray-600 mb-8">
             Join hundreds of developers who have successfully deployed their AI-built applications to production.
           </p>
-          <Button size="lg" asChild>
-            <Link href="/assessment">
-              Start Your Free Assessment <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <Link href="/assessment" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+            Start Your Free Assessment <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
         </div>
       </section>
 

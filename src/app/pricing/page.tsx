@@ -1,9 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { 
   Check,
   Shield,
@@ -16,43 +13,67 @@ import {
   FileText
 } from 'lucide-react'
 import Link from 'next/link'
-import { SUBSCRIPTION_PLANS, formatPrice } from '@/lib/stripe'
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(false)
-  const [isLoading, setIsLoading] = useState<string | null>(null)
 
-  const handleSubscribe = async (planType: string) => {
-    setIsLoading(planType)
-    
-    try {
-      const response = await fetch('/api/stripe/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          planType,
-          userId: 'demo-user', // In real app, get from auth
-          successUrl: `${window.location.origin}/dashboard?success=true`,
-          cancelUrl: `${window.location.origin}/pricing?canceled=true`
-        })
-      })
-
-      const { url } = await response.json()
-      
-      if (url) {
-        window.location.href = url
-      }
-    } catch (error) {
-      console.error('Subscription error:', error)
-    } finally {
-      setIsLoading(null)
+  const plans = [
+    {
+      name: 'Free',
+      description: 'Perfect for trying out our platform',
+      monthlyPrice: 0,
+      annualPrice: 0,
+      features: [
+        'Basic readiness score',
+        '3 assessments per month',
+        'High-level recommendations',
+        'Community support'
+      ],
+      popular: false,
+      cta: 'Start Free'
+    },
+    {
+      name: 'Basic',
+      description: 'For developers ready to go to production',
+      monthlyPrice: 29,
+      annualPrice: 290,
+      features: [
+        'Unlimited assessments',
+        'Detailed technical reports',
+        'Remediation roadmaps',
+        'Priority support',
+        'Security analysis',
+        'Performance insights'
+      ],
+      popular: true,
+      cta: 'Get Started'
+    },
+    {
+      name: 'Professional',
+      description: 'For teams and serious projects',
+      monthlyPrice: 99,
+      annualPrice: 990,
+      features: [
+        'Everything in Basic',
+        'Enterprise compliance analysis',
+        'Consultant matching',
+        'Implementation guidance',
+        'SOC 2/ISO 27001 prep',
+        'Custom integrations',
+        'Dedicated support'
+      ],
+      popular: false,
+      cta: 'Contact Sales'
     }
+  ]
+
+  const getPrice = (plan: any) => {
+    const price = isAnnual ? plan.annualPrice : plan.monthlyPrice
+    return price === 0 ? 'Free' : `$${price}`
   }
 
-  const getDiscountedPrice = (price: number) => {
-    return isAnnual ? Math.round(price * 0.8) : price // 20% annual discount
+  const getPeriod = () => {
+    return isAnnual ? '/year' : '/month'
   }
 
   return (
@@ -60,271 +81,230 @@ export default function PricingPage() {
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <Shield className="h-8 w-8 text-indigo-600" />
             <span className="text-2xl font-bold text-gray-900">ProtoReady.ai</span>
-          </div>
+          </Link>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" asChild>
-              <Link href="/">Home</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </Button>
+            <Link href="/assessment" className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              Try Free Assessment
+            </Link>
+            <Link href="/auth" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+              Sign In
+            </Link>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 pb-12">
-        <div className="max-w-6xl mx-auto">
-          {/* Header Section */}
-          <div className="text-center mb-12">
+      <main className="container mx-auto px-4 pb-16">
+        <div className="max-w-7xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-16">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Simple, Transparent Pricing
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-              Choose the perfect plan for your production readiness needs. 
-              Start free and upgrade as you scale.
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Start free and scale as you grow. No hidden fees, no surprises.
             </p>
 
             {/* Billing Toggle */}
-            <div className="flex items-center justify-center space-x-4 mb-8">
-              <span className={`text-sm ${!isAnnual ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+            <div className="flex items-center justify-center space-x-4 mb-12">
+              <span className={`text-sm font-medium ${!isAnnual ? 'text-gray-900' : 'text-gray-500'}`}>
                 Monthly
               </span>
               <button
                 onClick={() => setIsAnnual(!isAnnual)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  isAnnual ? 'bg-indigo-600' : 'bg-gray-200'
-                }`}
+                className="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 bg-gray-200"
+                style={{ backgroundColor: isAnnual ? '#4F46E5' : '#E5E7EB' }}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    isAnnual ? 'translate-x-6' : 'translate-x-1'
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isAnnual ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
-              <span className={`text-sm ${isAnnual ? 'text-gray-900 font-medium' : 'text-gray-500'}`}>
+              <span className={`text-sm font-medium ${isAnnual ? 'text-gray-900' : 'text-gray-500'}`}>
                 Annual
               </span>
               {isAnnual && (
-                <Badge className="bg-green-100 text-green-800">
+                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
                   Save 20%
-                </Badge>
+                </span>
               )}
             </div>
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {Object.entries(SUBSCRIPTION_PLANS).map(([planKey, plan]) => {
-              const isPopular = planKey === 'basic'
-              const price = getDiscountedPrice(plan.price)
-              
-              return (
-                <Card 
-                  key={planKey}
-                  className={`relative ${isPopular ? 'border-indigo-200 border-2 shadow-lg' : ''}`}
-                >
-                  {isPopular && (
-                    <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-600">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {plans.map((plan, index) => (
+              <div key={plan.name} className={`bg-white rounded-xl border shadow-sm relative ${plan.popular ? 'border-indigo-200 border-2' : ''}`}>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="inline-block bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium">
                       Most Popular
-                    </Badge>
-                  )}
-                  
-                  <CardHeader className="text-center pb-4">
-                    <CardTitle className="text-xl">{plan.name}</CardTitle>
-                    <div className="mt-4">
+                    </span>
+                  </div>
+                )}
+                
+                <div className="p-8">
+                  {/* Plan Header */}
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                    <p className="text-gray-600 mb-4">{plan.description}</p>
+                    
+                    <div className="mb-6">
                       <span className="text-4xl font-bold text-gray-900">
-                        {formatPrice(price)}
+                        {getPrice(plan)}
                       </span>
-                      {plan.price > 0 && (
-                        <span className="text-gray-600">
-                          /{isAnnual ? 'year' : 'month'}
-                        </span>
+                      {plan.monthlyPrice > 0 && (
+                        <span className="text-gray-600 ml-1">{getPeriod()}</span>
                       )}
                     </div>
-                    {isAnnual && plan.price > 0 && (
-                      <div className="text-sm text-gray-500">
-                        <span className="line-through">{formatPrice(plan.price)}</span>
-                        <span className="text-green-600 ml-2">Save 20%</span>
-                      </div>
-                    )}
-                  </CardHeader>
+                  </div>
 
-                  <CardContent>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-center">
-                          <Check className="h-4 w-4 text-green-500 mr-3 flex-shrink-0" />
-                          <span className="text-sm text-gray-700">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Features */}
+                  <ul className="space-y-4 mb-8">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start">
+                        <Check className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                    <Button 
-                      className={`w-full ${isPopular ? '' : 'variant-outline'}`}
-                      onClick={() => planKey !== 'free' ? handleSubscribe(planKey) : null}
-                      disabled={isLoading === planKey}
-                      asChild={planKey === 'free'}
-                    >
-                      {planKey === 'free' ? (
-                        <Link href="/assessment">
-                          Start Free Assessment
-                        </Link>
-                      ) : (
-                        <>
-                          {isLoading === planKey ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                              Processing...
-                            </>
-                          ) : (
-                            <>
-                              <CreditCard className="h-4 w-4 mr-2" />
-                              Subscribe to {plan.name}
-                            </>
-                          )}
-                        </>
-                      )}
-                    </Button>
-
-                    {planKey !== 'free' && (
-                      <p className="text-xs text-gray-500 text-center mt-2">
-                        Cancel anytime • No setup fees
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              )
-            })}
+                  {/* CTA Button */}
+                  <Link
+                    href={plan.name === 'Free' ? '/assessment' : '/auth'}
+                    className={`w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md transition-colors ${
+                      plan.popular
+                        ? 'text-white bg-indigo-600 hover:bg-indigo-700'
+                        : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    {plan.cta}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Feature Comparison */}
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
-              Compare Features
+          {/* Features Comparison */}
+          <div className="bg-white rounded-xl border shadow-sm p-8 mb-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+              What's Included
             </h2>
             
-            <Card>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="text-left py-4 px-6 font-medium text-gray-900">Features</th>
-                        <th className="text-center py-4 px-6 font-medium text-gray-900">Free</th>
-                        <th className="text-center py-4 px-6 font-medium text-gray-900">Basic</th>
-                        <th className="text-center py-4 px-6 font-medium text-gray-900">Professional</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      <tr>
-                        <td className="py-4 px-6 font-medium">Monthly Assessments</td>
-                        <td className="text-center py-4 px-6">3</td>
-                        <td className="text-center py-4 px-6">Unlimited</td>
-                        <td className="text-center py-4 px-6">Unlimited</td>
-                      </tr>
-                      <tr className="bg-gray-50">
-                        <td className="py-4 px-6 font-medium">Detailed Reports</td>
-                        <td className="text-center py-4 px-6">—</td>
-                        <td className="text-center py-4 px-6">
-                          <Check className="h-5 w-5 text-green-500 mx-auto" />
-                        </td>
-                        <td className="text-center py-4 px-6">
-                          <Check className="h-5 w-5 text-green-500 mx-auto" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-4 px-6 font-medium">Consultant Access</td>
-                        <td className="text-center py-4 px-6">—</td>
-                        <td className="text-center py-4 px-6">—</td>
-                        <td className="text-center py-4 px-6">
-                          <Check className="h-5 w-5 text-green-500 mx-auto" />
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-50">
-                        <td className="py-4 px-6 font-medium">Priority Support</td>
-                        <td className="text-center py-4 px-6">—</td>
-                        <td className="text-center py-4 px-6">
-                          <Check className="h-5 w-5 text-green-500 mx-auto" />
-                        </td>
-                        <td className="text-center py-4 px-6">
-                          <Check className="h-5 w-5 text-green-500 mx-auto" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="py-4 px-6 font-medium">SOC 2 Compliance</td>
-                        <td className="text-center py-4 px-6">—</td>
-                        <td className="text-center py-4 px-6">—</td>
-                        <td className="text-center py-4 px-6">
-                          <Check className="h-5 w-5 text-green-500 mx-auto" />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Assessment Features */}
+              <div className="text-center">
+                <FileText className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Comprehensive Assessment
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Code quality analysis</li>
+                  <li>• Security vulnerability scan</li>
+                  <li>• Performance bottleneck detection</li>
+                  <li>• Deployment readiness check</li>
+                  <li>• Best practices validation</li>
+                </ul>
+              </div>
+
+              {/* Compliance Features */}
+              <div className="text-center">
+                <Shield className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Compliance & Security
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• GDPR compliance check</li>
+                  <li>• HIPAA readiness assessment</li>
+                  <li>• SOC 2 preparation guidance</li>
+                  <li>• Data protection audit</li>
+                  <li>• Security best practices</li>
+                </ul>
+              </div>
+
+              {/* Support Features */}
+              <div className="text-center">
+                <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Expert Support
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Access to expert consultants</li>
+                  <li>• Implementation guidance</li>
+                  <li>• Code review sessions</li>
+                  <li>• Deployment assistance</li>
+                  <li>• Priority support channels</li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* FAQ Section */}
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold text-center text-gray-900 mb-8">
+          <div className="bg-white rounded-xl border shadow-sm p-8 mb-16">
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
               Frequently Asked Questions
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Can I change plans anytime?</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  What happens after the assessment?
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately 
-                  and we&apos;ll prorate any charges.
+                  You'll receive a detailed report with specific recommendations and can connect with our expert consultants to implement the suggested improvements.
                 </p>
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">What payment methods do you accept?</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Can I upgrade or downgrade anytime?
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  We accept all major credit cards (Visa, MasterCard, American Express) and PayPal 
-                  through our secure Stripe integration.
+                  Yes, you can change your plan at any time. Changes take effect immediately, and we'll prorate any billing adjustments.
                 </p>
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Is there a free trial?</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Do you offer refunds?
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Our Free plan gives you 3 assessments per month forever. You can upgrade anytime 
-                  to unlock additional features.
+                  We offer a 30-day money-back guarantee for all paid plans. If you're not satisfied, we'll provide a full refund.
                 </p>
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">How does consultant matching work?</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  What payment methods do you accept?
+                </h3>
                 <p className="text-gray-600 text-sm">
-                  Professional plan users get access to our vetted consultant marketplace. We match you 
-                  with experts based on your project needs and technology stack.
+                  We accept all major credit cards, PayPal, and bank transfers for annual plans. All payments are processed securely through Stripe.
                 </p>
               </div>
             </div>
           </div>
 
           {/* CTA Section */}
-          <div className="mt-16 text-center">
-            <Card className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-              <CardContent className="p-8">
-                <h2 className="text-2xl font-bold mb-4">Ready to Make Your App Production-Ready?</h2>
-                <p className="text-indigo-100 mb-6 max-w-2xl mx-auto">
-                  Join thousands of developers who have successfully deployed their AI-built applications to production.
-                </p>
-                <Button size="lg" variant="secondary" asChild>
-                  <Link href="/assessment">
-                    Start Free Assessment
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Ready to Make Your App Production-Ready?
+            </h2>
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+              Start with a free assessment and see how we can help you bridge the gap from prototype to production.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/assessment" className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                Start Free Assessment
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <Link href="/marketplace" className="inline-flex items-center px-8 py-4 border border-gray-300 text-lg font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+                Browse Consultants
+              </Link>
+            </div>
           </div>
         </div>
       </main>
