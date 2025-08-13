@@ -16,3 +16,6 @@ export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 export { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from './table'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
 export { Textarea } from './textarea'
+export { Checkbox } from './checkbox'
+export { Badge, badgeVariants } from './badge'
+export { Avatar, AvatarFallback, AvatarImage } from './avatar'

@@ -1,85 +1,135 @@
 'use client'
 
 import { useState } from 'react'
-import { Shield, User, Briefcase, Star, CheckCircle, ArrowRight } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import {
+  Shield,
+  ArrowLeft,
+  Upload,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+  Award,
+  Users,
+  Clock,
+  DollarSign
+} from 'lucide-react'
+
+interface FormData {
+  fullName: string
+  bio: string
+  specializations: string[]
+  yearsExperience: number
+  hourlyRate: number
+  portfolioData: {
+    websites: string[]
+  }
+  resumeUrl: string
+  linkedinUrl: string
+  githubUrl: string
+  timezone: string
+}
+
+const specializationOptions = [
+  'Security & Compliance',
+  'Performance Optimization', 
+  'DevOps & Infrastructure',
+  'API Architecture',
+  'Database Design',
+  'Frontend Development',
+  'Mobile Development',
+  'Cloud Architecture',
+  'Microservices',
+  'Testing & QA'
+]
+
+const timezones = [
+  'UTC-8 (PST)', 'UTC-7 (MST)', 'UTC-6 (CST)', 'UTC-5 (EST)',
+  'UTC+0 (GMT)', 'UTC+1 (CET)', 'UTC+2 (EET)', 'UTC+8 (CST)',
+  'UTC+9 (JST)', 'UTC+10 (AEST)'
+]
 
 export default function ConsultantApplyPage() {
-  const [submitted, setSubmitted] = useState(false)
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    location: '',
-    experience: '',
-    hourlyRate: '',
+  const { data: session, status } = useSession()
+  const [step, setStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [formData, setFormData] = useState<FormData>({
+    fullName: session?.user?.name || '',
     bio: '',
-    skills: '',
-    portfolio: ''
+    specializations: [],
+    yearsExperience: 0,
+    hourlyRate: 95,
+    portfolioData: {
+      websites: ['']
+    },
+    resumeUrl: '',
+    linkedinUrl: '',
+    githubUrl: '',
+    timezone: 'UTC-5 (EST)'
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the data to your API
-    setSubmitted(true)
+    setIsSubmitting(true)
+    setError('')
+
+    try {
+      // Simulate API call - replace with actual API endpoint
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      setStep(4) // Success step
+    } catch (err) {
+      setError('Application submission failed. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+  const handleSpecializationToggle = (specialization: string) => {
+    setFormData(prev => ({
+      ...prev,
+      specializations: prev.specializations.includes(specialization)
+        ? prev.specializations.filter(s => s !== specialization)
+        : [...prev.specializations, specialization]
+    }))
   }
 
-  if (submitted) {
+  // Loading state
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+      </div>
+    )
+  }
+
+  // Unauthenticated state
+  if (status === 'unauthenticated') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        {/* Header */}
         <header className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-indigo-600" />
-              <span className="text-2xl font-bold text-gray-900">ProtoReady.ai</span>
-            </Link>
+          <div className="flex items-center space-x-2">
+            <Shield className="h-8 w-8 text-indigo-600" />
+            <span className="text-2xl font-bold text-gray-900">ProtoReady.ai</span>
           </div>
         </header>
 
         <main className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="mb-8">
-              <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">Application Submitted!</h1>
-              <p className="text-lg text-gray-600 mb-8">
-                Thank you for your interest in joining our expert consultant network. 
-                We'll review your application and get back to you within 5-7 business days.
+            <div className="bg-white rounded-xl shadow-lg border p-8">
+              <Award className="h-16 w-16 text-indigo-600 mx-auto mb-6" />
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Join Our Expert Network
+              </h1>
+              <p className="text-lg text-gray-600 mb-6">
+                Please sign in to submit your consultant application. We use authentication to verify your identity and maintain a trusted network.
               </p>
-            </div>
-            
-            <div className="bg-white rounded-xl border shadow-sm p-6 mb-8">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">What's Next?</h2>
-              <ul className="text-left space-y-3 text-gray-600">
-                <li className="flex items-center">
-                  <span className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-sm font-medium mr-3">1</span>
-                  Application review (3-5 days)
-                </li>
-                <li className="flex items-center">
-                  <span className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-sm font-medium mr-3">2</span>
-                  Technical screening call (if selected)
-                </li>
-                <li className="flex items-center">
-                  <span className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-sm font-medium mr-3">3</span>
-                  Profile activation and onboarding
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
-                Return Home
-              </Link>
-              <Link href="/marketplace" className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-                Browse Consultants
+              <Link 
+                href="/auth/signin?callbackUrl=/consultant/apply"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              >
+                Sign In to Apply
               </Link>
             </div>
           </div>

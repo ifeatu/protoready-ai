@@ -11,6 +11,7 @@ import {
   Eye
 } from 'lucide-react'
 import Link from 'next/link'
+import { ProtectedAssessment } from '@/components/protected-assessment'
 
 export default function AssessmentSubmitPage() {
   const [step, setStep] = useState(1)
@@ -72,7 +73,8 @@ export default function AssessmentSubmitPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <ProtectedAssessment>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
@@ -356,6 +358,7 @@ echo "=== PROTOREADY ANALYSIS END ==="`}</pre>
           )}
         </div>
       </main>
-    </div>
+      </div>
+    </ProtectedAssessment>
   )
 }

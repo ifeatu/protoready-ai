@@ -6,6 +6,14 @@ declare module 'next-auth' {
   interface Session {
     accessToken?: string
     provider?: string
+    user: {
+      id: string
+      email?: string | null
+      name?: string | null
+      image?: string | null
+      role?: 'user' | 'consultant' | 'admin'
+      onboardingCompleted?: boolean
+    }
   }
 }
 
@@ -13,6 +21,9 @@ declare module 'next-auth/jwt' {
   interface JWT {
     accessToken?: string
     provider?: string
+    role?: 'user' | 'consultant' | 'admin'
+    onboardingCompleted?: boolean
+    githubLogin?: string
   }
 }
 
@@ -38,8 +49,9 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account) {
+    async jwt({ token, user, account, profile }) {
+      // Initial sign in
+      if (account && user) {
         token.accessToken = account.access_token
         token.provider = account.provider
         
@@ -47,7 +59,13 @@ export const authOptions: NextAuthOptions = {
         if (account.provider === 'github') {
           token.githubLogin = (profile as any)?.login
         }
+
+        // For now, default all users to 'user' role
+        // In production, this would query Supabase for the user's role
+        token.role = 'user'
+        token.onboardingCompleted = false
       }
+
       return token
     },
     async session({ session, token }) {
@@ -55,6 +73,12 @@ export const authOptions: NextAuthOptions = {
         ...session,
         accessToken: token.accessToken as string,
         provider: token.provider as string,
+        user: {
+          ...session.user,
+          id: token.sub as string,
+          role: token.role as 'user' | 'consultant' | 'admin',
+          onboardingCompleted: token.onboardingCompleted as boolean
+        },
         githubLogin: token.githubLogin as string
       }
     }
