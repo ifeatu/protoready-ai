@@ -17,6 +17,11 @@ export default function AdminDashboard() {
             This is a minimal admin dashboard page for testing deployment.
             The full admin functionality will be restored once the module resolution issue is fixed.
           </p>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Status:</strong> Deployment test in progress. Build timestamp: {new Date().toISOString()}
+            </p>
+          </div>
         </div>
       </main>
     </div>
