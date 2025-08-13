@@ -1,531 +1,273 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { 
+import {
+  ArrowLeft,
   Calendar,
   Clock,
   DollarSign,
   Star,
-  CheckCircle,
-  ArrowLeft,
-  MessageSquare,
-  Video,
-  Phone,
-  Users,
-  Shield,
-  ChevronLeft,
-  ChevronRight
+  MapPin,
+  User,
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 
-// Mock consultant data
-const consultantData = {
-  id: 'sarah-johnson',
-  name: 'Sarah Johnson',
-  title: 'Senior Full-Stack Developer',
-  avatar: '/api/placeholder/150',
-  rating: 4.9,
-  reviews: 127,
-  hourlyRate: 85,
-  location: 'San Francisco, CA',
-  timezone: 'PST (UTC-8)',
-  responseTime: '2 hours',
-  skills: ['React', 'Node.js', 'TypeScript', 'AWS', 'PostgreSQL', 'Docker'],
-  bio: 'Experienced full-stack developer with 8+ years building scalable web applications. Specialized in React ecosystem, Node.js backends, and cloud infrastructure. Passionate about helping teams adopt modern development practices and improve code quality.',
-  expertise: [
-    'Frontend Architecture',
-    'API Design',
-    'Performance Optimization',
-    'Code Review',
-    'DevOps & CI/CD',
-    'Database Design'
-  ],
-  availability: {
-    '2024-01-15': ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'],
-    '2024-01-16': ['10:00', '11:00', '13:00', '14:00', '15:00'],
-    '2024-01-17': ['09:00', '10:00', '11:00', '16:00', '17:00'],
-    '2024-01-18': ['09:00', '13:00', '14:00', '15:00', '16:00'],
-    '2024-01-19': ['10:00', '11:00', '14:00', '15:00'],
-    '2024-01-22': ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00']
-  },
-  communicationMethods: [
-    { type: 'video', label: 'Video Call', icon: Video, available: true },
-    { type: 'audio', label: 'Audio Call', icon: Phone, available: true },
-    { type: 'chat', label: 'Text Chat', icon: MessageSquare, available: false }
-  ]
+interface BookingPageProps {
+  params: {
+    id: string
+  }
 }
 
-export default function BookConsultantPage() {
-  const params = useParams()
-  const [selectedDate, setSelectedDate] = useState<string>('')
-  const [selectedTime, setSelectedTime] = useState<string>('')
-  const [duration, setDuration] = useState<number>(1)
-  const [communicationMethod, setCommunicationMethod] = useState<string>('video')
-  const [projectDetails, setProjectDetails] = useState({
-    title: '',
-    description: '',
-    goals: '',
-    timeline: ''
-  })
-  const [currentWeek, setCurrentWeek] = useState(new Date('2024-01-15'))
-  const [isLoading, setIsLoading] = useState(false)
-  const [step, setStep] = useState(1)
+export default function BookingPage({ params }: BookingPageProps) {
+  const [selectedDate, setSelectedDate] = useState('')
+  const [selectedTime, setSelectedTime] = useState('')
+  const [duration, setDuration] = useState('1')
+  const [projectDescription, setProjectDescription] = useState('')
+  const [urgency, setUrgency] = useState('normal')
 
-  const consultant = consultantData
-  const totalCost = consultant.hourlyRate * duration
-
-  // Generate week dates
-  const getWeekDates = (startDate: Date) => {
-    const dates = []
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startDate)
-      date.setDate(startDate.getDate() + i)
-      dates.push(date)
-    }
-    return dates
+  // Mock consultant data - in real app, fetch based on params.id
+  const consultant = {
+    id: params.id,
+    name: 'Sarah Johnson',
+    title: 'Senior React & Next.js Developer',
+    rating: 4.9,
+    reviewCount: 127,
+    hourlyRate: 85,
+    location: 'San Francisco, CA',
+    avatar: '',
+    specialties: ['React', 'Next.js', 'TypeScript', 'Node.js', 'AWS'],
+    availability: 'Available this week'
   }
 
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0]
-  }
-
-  const formatDisplayDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
+  const handleBooking = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('Booking submitted:', {
+      consultant: consultant.id,
+      date: selectedDate,
+      time: selectedTime,
+      duration,
+      projectDescription,
+      urgency
     })
+    // Booking logic would go here
   }
 
-  const weekDates = getWeekDates(currentWeek)
-
-  const nextWeek = () => {
-    const newDate = new Date(currentWeek)
-    newDate.setDate(currentWeek.getDate() + 7)
-    setCurrentWeek(newDate)
-  }
-
-  const prevWeek = () => {
-    const newDate = new Date(currentWeek)
-    newDate.setDate(currentWeek.getDate() - 7)
-    setCurrentWeek(newDate)
-  }
-
-  const handleBooking = async () => {
-    setIsLoading(true)
-    
-    // Simulate booking process
-    setTimeout(() => {
-      setIsLoading(false)
-      setStep(3) // Success step
-    }, 2000)
-  }
-
-  const renderTimeSelection = () => (
-    <div className="space-y-6">
-      {/* Calendar Navigation */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Select Date & Time</h3>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" onClick={prevWeek}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm font-medium">
-            {currentWeek.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </span>
-          <Button variant="outline" size="sm" onClick={nextWeek}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Week Calendar */}
-      <div className="grid grid-cols-7 gap-2">
-        {weekDates.map((date) => {
-          const dateStr = formatDate(date)
-          const available = consultant.availability[dateStr] || []
-          const isSelected = selectedDate === dateStr
-          const isPast = date < new Date()
-          
-          return (
-            <div key={dateStr} className="text-center">
-              <div className="text-xs text-gray-500 mb-2">
-                {formatDisplayDate(date)}
-              </div>
-              <Button
-                variant={isSelected ? "default" : "outline"}
-                className={`w-full h-12 text-xs ${
-                  isPast ? 'opacity-50 cursor-not-allowed' : ''
-                } ${available.length === 0 ? 'opacity-50' : ''}`}
-                onClick={() => available.length > 0 && !isPast && setSelectedDate(dateStr)}
-                disabled={isPast || available.length === 0}
-              >
-                {date.getDate()}
-                {available.length > 0 && !isPast && (
-                  <div className="text-xs text-green-600 mt-1">
-                    {available.length} slots
-                  </div>
-                )}
-              </Button>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Time Slots */}
-      {selectedDate && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Available Times</h4>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-            {(consultant.availability[selectedDate] || []).map((time) => (
-              <Button
-                key={time}
-                variant={selectedTime === time ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedTime(time)}
-              >
-                {time}
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Duration */}
-      {selectedTime && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Session Duration</h4>
-          <div className="grid grid-cols-4 gap-2">
-            {[1, 2, 3, 4].map((hours) => (
-              <Button
-                key={hours}
-                variant={duration === hours ? "default" : "outline"}
-                size="sm"
-                onClick={() => setDuration(hours)}
-              >
-                {hours}h
-              </Button>
-            ))}
-          </div>
-          <p className="text-sm text-gray-600">
-            Total cost: <span className="font-semibold">${totalCost}</span>
-          </p>
-        </div>
-      )}
-
-      {/* Communication Method */}
-      {selectedTime && (
-        <div className="space-y-3">
-          <h4 className="font-medium">Communication Method</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {consultant.communicationMethods.map((method) => {
-              const IconComponent = method.icon
-              return (
-                <Button
-                  key={method.type}
-                  variant={communicationMethod === method.type ? "default" : "outline"}
-                  className="flex items-center justify-center p-4 h-auto"
-                  onClick={() => setCommunicationMethod(method.type)}
-                  disabled={!method.available}
-                >
-                  <div className="text-center">
-                    <IconComponent className="h-6 w-6 mx-auto mb-2" />
-                    <div className="text-sm font-medium">{method.label}</div>
-                  </div>
-                </Button>
-              )
-            })}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-
-  const renderProjectDetails = () => (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold">Project Details</h3>
-      
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="projectTitle">Project Title *</Label>
-          <Input
-            id="projectTitle"
-            value={projectDetails.title}
-            onChange={(e) => setProjectDetails({...projectDetails, title: e.target.value})}
-            placeholder="e.g., React App Performance Review"
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="description">Project Description *</Label>
-          <Textarea
-            id="description"
-            value={projectDetails.description}
-            onChange={(e) => setProjectDetails({...projectDetails, description: e.target.value})}
-            placeholder="Describe your current project, technology stack, and specific challenges you're facing..."
-            rows={4}
-            required
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="goals">Session Goals</Label>
-          <Textarea
-            id="goals"
-            value={projectDetails.goals}
-            onChange={(e) => setProjectDetails({...projectDetails, goals: e.target.value})}
-            placeholder="What specific outcomes are you hoping to achieve from this consultation?"
-            rows={3}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="timeline">Project Timeline</Label>
-          <Input
-            id="timeline"
-            value={projectDetails.timeline}
-            onChange={(e) => setProjectDetails({...projectDetails, timeline: e.target.value})}
-            placeholder="e.g., Need to launch in 2 weeks"
-          />
-        </div>
-      </div>
-
-      {/* Booking Summary */}
-      <Card className="bg-gray-50">
-        <CardContent className="p-4">
-          <h4 className="font-medium mb-3">Booking Summary</h4>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Consultant:</span>
-              <span className="font-medium">{consultant.name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Date & Time:</span>
-              <span className="font-medium">
-                {selectedDate && new Date(selectedDate).toLocaleDateString()} at {selectedTime}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>Duration:</span>
-              <span className="font-medium">{duration} hour{duration > 1 ? 's' : ''}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Method:</span>
-              <span className="font-medium capitalize">{communicationMethod} call</span>
-            </div>
-            <div className="flex justify-between border-t pt-2 mt-2">
-              <span className="font-medium">Total Cost:</span>
-              <span className="font-bold">${totalCost}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-
-  const renderSuccess = () => (
-    <div className="text-center space-y-6">
-      <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
-        <CheckCircle className="h-8 w-8 text-green-600" />
-      </div>
-      
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Booking Confirmed!</h2>
-        <p className="text-gray-600 mt-2">
-          Your consultation with {consultant.name} has been scheduled.
-        </p>
-      </div>
-
-      <Card className="bg-blue-50 text-left">
-        <CardContent className="p-4">
-          <h3 className="font-medium text-blue-900 mb-3">What happens next?</h3>
-          <ul className="text-sm text-blue-800 space-y-2">
-            <li>• You&apos;ll receive a confirmation email with meeting details</li>
-            <li>• Calendar invite will be sent with video call link</li>
-            <li>• {consultant.name} will contact you before the session</li>
-            <li>• Payment will be processed after the consultation</li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-4">
-        <p className="text-sm text-gray-600">
-          Booking ID: <span className="font-mono font-medium">BOOK-{Date.now()}</span>
-        </p>
-        
-        <div className="flex space-x-4 justify-center">
-          <Button variant="outline" asChild>
-            <Link href="/dashboard">View Dashboard</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/marketplace">Browse More Consultants</Link>
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
+  const timeSlots = [
+    '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/marketplace">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link 
+                href={`/consultant/${params.id}`}
+                className="inline-flex items-center px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Marketplace
+                Back to Profile
               </Link>
-            </Button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">Book Consultation</h1>
-              <p className="text-sm text-gray-600">Schedule time with {consultant.name}</p>
+              <h1 className="text-2xl font-bold text-gray-900">Book Consultation</h1>
             </div>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {step < 3 && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Consultant Info Sidebar */}
-              <div className="lg:col-span-1">
-                <Card className="sticky top-8">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4 mb-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={consultant.avatar} alt={consultant.name} />
-                        <AvatarFallback>{consultant.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h2 className="text-lg font-semibold">{consultant.name}</h2>
-                        <p className="text-sm text-gray-600">{consultant.title}</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                            <span className="text-sm font-medium ml-1">{consultant.rating}</span>
-                          </div>
-                          <span className="text-sm text-gray-500">({consultant.reviews} reviews)</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Hourly Rate:</span>
-                        <span className="font-semibold">${consultant.hourlyRate}/hour</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Location:</span>
-                        <span>{consultant.location}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">Response Time:</span>
-                        <span>{consultant.responseTime}</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <h3 className="font-medium text-sm">Expertise</h3>
-                      <div className="flex flex-wrap gap-1">
-                        {consultant.skills.slice(0, 4).map((skill) => (
-                          <Badge key={skill} variant="secondary" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
-                        {consultant.skills.length > 4 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{consultant.skills.length - 4} more
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+        <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Consultant Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border p-6 sticky top-8">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                  <User className="h-8 w-8 text-gray-400" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-lg">{consultant.name}</h2>
+                  <p className="text-gray-600 text-sm">{consultant.title}</p>
+                </div>
               </div>
 
-              {/* Booking Form */}
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle>
-                          {step === 1 ? 'Select Date & Time' : 'Project Information'}
-                        </CardTitle>
-                        <CardDescription>
-                          {step === 1 
-                            ? 'Choose your preferred consultation time'
-                            : 'Tell us about your project and goals'
-                          }
-                        </CardDescription>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Step {step} of 2
-                      </div>
-                    </div>
-                  </CardHeader>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center">
+                  <Star className="h-4 w-4 text-yellow-400 mr-2" />
+                  <span className="text-sm font-medium">{consultant.rating}</span>
+                  <span className="text-sm text-gray-600 ml-1">({consultant.reviewCount} reviews)</span>
+                </div>
+                <div className="flex items-center">
+                  <DollarSign className="h-4 w-4 text-green-600 mr-2" />
+                  <span className="text-sm">${consultant.hourlyRate}/hour</span>
+                </div>
+                <div className="flex items-center">
+                  <MapPin className="h-4 w-4 text-gray-400 mr-2" />
+                  <span className="text-sm text-gray-600">{consultant.location}</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="h-4 w-4 text-blue-600 mr-2" />
+                  <span className="text-sm text-green-600">{consultant.availability}</span>
+                </div>
+              </div>
 
-                  <CardContent>
-                    {step === 1 && renderTimeSelection()}
-                    {step === 2 && renderProjectDetails()}
+              <div className="mb-6">
+                <h3 className="font-medium text-sm text-gray-700 mb-2">Specialties</h3>
+                <div className="flex flex-wrap gap-2">
+                  {consultant.specialties.map((specialty) => (
+                    <span
+                      key={specialty}
+                      className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                    >
+                      {specialty}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-                    <div className="flex justify-between pt-6 mt-6 border-t">
-                      <Button
-                        variant="outline"
-                        onClick={() => setStep(Math.max(1, step - 1))}
-                        disabled={step === 1}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 mb-1">
+                  ${parseInt(duration) * consultant.hourlyRate}
+                </div>
+                <div className="text-sm text-gray-600">
+                  Total for {duration} hour{parseInt(duration) !== 1 ? 's' : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Booking Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <h2 className="text-xl font-semibold mb-6">Schedule Your Consultation</h2>
+              
+              <form onSubmit={handleBooking} className="space-y-6">
+                {/* Date Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Date
+                  </label>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    min={new Date().toISOString().split('T')[0]}
+                    required
+                  />
+                </div>
+
+                {/* Time Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Time (PST)
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {timeSlots.map((time) => (
+                      <button
+                        key={time}
+                        type="button"
+                        onClick={() => setSelectedTime(time)}
+                        className={`px-3 py-2 text-sm border rounded-lg transition-colors ${
+                          selectedTime === time
+                            ? 'bg-indigo-600 text-white border-indigo-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                        }`}
                       >
-                        Previous
-                      </Button>
-                      
-                      {step === 1 ? (
-                        <Button
-                          onClick={() => setStep(2)}
-                          disabled={!selectedDate || !selectedTime}
-                        >
-                          Continue
-                        </Button>
-                      ) : (
-                        <Button 
-                          onClick={handleBooking}
-                          disabled={isLoading || !projectDetails.title || !projectDetails.description}
-                          className="bg-indigo-600 hover:bg-indigo-700"
-                        >
-                          {isLoading ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                              Booking...
-                            </>
-                          ) : (
-                            <>
-                              Confirm Booking (${totalCost})
-                            </>
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                  {!selectedTime && (
+                    <p className="text-red-500 text-sm mt-1">Please select a time slot</p>
+                  )}
+                </div>
+
+                {/* Duration */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Duration
+                  </label>
+                  <select
+                    value={duration}
+                    onChange={(e) => setDuration(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="0.5">30 minutes</option>
+                    <option value="1">1 hour</option>
+                    <option value="2">2 hours</option>
+                    <option value="3">3 hours</option>
+                    <option value="4">4 hours</option>
+                  </select>
+                </div>
+
+                {/* Project Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Description
+                  </label>
+                  <textarea
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    rows={4}
+                    placeholder="Describe your project, specific challenges, and what you'd like help with..."
+                    required
+                  />
+                </div>
+
+                {/* Urgency */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Urgency
+                  </label>
+                  <select
+                    value={urgency}
+                    onChange={(e) => setUrgency(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="low">Low - General guidance</option>
+                    <option value="normal">Normal - Active development</option>
+                    <option value="high">High - Pre-launch support</option>
+                    <option value="urgent">Urgent - Production issues</option>
+                  </select>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={!selectedTime}
+                  className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Book Consultation (${parseInt(duration) * consultant.hourlyRate})
+                </button>
+              </form>
+
+              {/* Additional Info */}
+              <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+                <h3 className="font-medium text-blue-900 mb-2">What to expect:</h3>
+                <div className="space-y-1 text-sm text-blue-800">
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span>Video call link will be sent 24 hours before</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span>Session recordings available for 30 days</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span>Follow-up summary and action items</span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span>100% money-back guarantee</span>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
-
-          {step === 3 && (
-            <div className="max-w-2xl mx-auto">
-              {renderSuccess()}
-            </div>
-          )}
+          </div>
         </div>
       </main>
     </div>
