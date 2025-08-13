@@ -1,5 +1,4 @@
 {
-  "project": "protoready-ai",
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
