@@ -72,3 +72,6 @@
     "npm": ">=10.0.0"
   }
 }
+// 2. Update Package.json Engines
+
+Update the engines section in your <mcfile name="package.json" path="/Users/pierre/software/protoready.ai/nextjs-protoready/package.json"></mcfile>:
