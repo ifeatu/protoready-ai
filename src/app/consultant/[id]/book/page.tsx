@@ -14,12 +14,13 @@ import {
 import Link from 'next/link'
 
 interface BookingPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function BookingPage({ params }: BookingPageProps) {
+export default async function BookingPage({ params }: BookingPageProps) {
+  const { id } = await params
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [duration, setDuration] = useState('1')
@@ -28,7 +29,7 @@ export default function BookingPage({ params }: BookingPageProps) {
 
   // Mock consultant data - in real app, fetch based on params.id
   const consultant = {
-    id: params.id,
+    id: id,
     name: 'Sarah Johnson',
     title: 'Senior React & Next.js Developer',
     rating: 4.9,

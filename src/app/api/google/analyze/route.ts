@@ -95,7 +95,7 @@ function calculateOrganizationScore(analysis: any): {
   // Check for duplicate file types that might indicate redundancy
   const imageFiles = Object.entries(fileTypes)
     .filter(([type]) => type.startsWith('image/'))
-    .reduce((sum, [, count]) => sum + count, 0)
+    .reduce((sum, [, count]) => sum + (count as number), 0)
   
   if (imageFiles > totalFiles * 0.5) {
     recommendations.push('Consider organizing images into albums or folders')

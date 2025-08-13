@@ -14,12 +14,13 @@ import {
 import Link from 'next/link'
 
 interface ReviewsPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function ReviewsPage({ params }: ReviewsPageProps) {
+export default async function ReviewsPage({ params }: ReviewsPageProps) {
+  const { id } = await params
   const [newReview, setNewReview] = useState({
     rating: 5,
     title: '',
@@ -29,7 +30,7 @@ export default function ReviewsPage({ params }: ReviewsPageProps) {
 
   // Mock consultant data
   const consultant = {
-    id: params.id,
+    id: id,
     name: 'Sarah Johnson',
     title: 'Senior React & Next.js Developer',
     rating: 4.9,
@@ -180,7 +181,7 @@ export default function ReviewsPage({ params }: ReviewsPageProps) {
                       <div className="flex items-center space-x-2">
                         <p className="font-medium">{review.clientName}</p>
                         {review.verified && (
-                          <CheckCircle className="h-4 w-4 text-green-500" title="Verified client" />
+                          <CheckCircle className="h-4 w-4 text-green-500" />
                         )}
                       </div>
                       <div className="flex items-center space-x-2">

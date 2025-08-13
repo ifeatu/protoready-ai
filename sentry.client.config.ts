@@ -15,11 +15,12 @@ Sentry.init({
   
   // Session replay for debugging
   integrations: [
-    new Sentry.Replay({
-      // Mask all text content, but not inputs
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
+    // Temporarily disabled due to API changes
+    // Sentry.replayIntegration({
+    //   // Mask all text content, but not inputs
+    //   maskAllText: true,
+    //   blockAllMedia: true,
+    // }),
   ],
   
   // Environment configuration

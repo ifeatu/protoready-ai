@@ -9,8 +9,8 @@ Disallow: /_next/
 Disallow: /static/
 
 # Host
-Host: https://protoready.ai
+Host: http://localhost:3000
 
 # Sitemaps
-Sitemap: https://protoready.ai/sitemap.xml
-Sitemap: https://protoready.ai/server-sitemap.xml
+Sitemap: http://localhost:3000/sitemap.xml
+Sitemap: http://localhost:3000/server-sitemap.xml

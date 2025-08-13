@@ -33,8 +33,8 @@ Sentry.init({
   
   // Server-side integrations
   integrations: [
-    // HTTP integration for tracing
-    new Sentry.Integrations.Http({ tracing: true }),
+    // Temporarily disabled due to API changes
+    // Sentry.httpIntegration({ tracing: true }),
   ],
   
   // Configure which errors to ignore
