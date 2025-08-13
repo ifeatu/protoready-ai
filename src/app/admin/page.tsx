@@ -19,7 +19,7 @@ export default function AdminDashboard() {
           </p>
           <div className="mt-4 p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
-              <strong>Status:</strong> Deployment test in progress. Build timestamp: {new Date().toISOString()}
+              <strong>Status:</strong> Deployment successful! Build timestamp: {new Date().toISOString()}
             </p>
           </div>
         </div>
